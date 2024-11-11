@@ -117,9 +117,15 @@ const items: MenuItem[] = [
   },
 ];
 
+const defaultCurrent: MenuItem = {
+  key: 'examRoomManagement',
+  label: '考场管理',
+  icon: <AppstoreOutlined />,
+};
+
 const PageLayout: React.FC = () => {
   const navigate = useNavigate();
-  const [current, setCurrent] = useState('examRoomManagement');
+  const [current, setCurrent] = useState<MenuItem>(defaultCurrent);
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false); // 新增状态
 
@@ -139,17 +145,17 @@ const PageLayout: React.FC = () => {
     // 找到key与primaryPath匹配的项
     const matchedItem = flattenedItems.find(item => item.key === primaryPath);
     if (matchedItem) {
-      setCurrent(matchedItem.key);
+      setCurrent(matchedItem);
     } else {
       // 如果没有匹配的路由，设置为默认值
-      setCurrent('zoneManagement');
+      setCurrent(defaultCurrent);
     }
 
     if (matchedItem) {
-      setCurrent(matchedItem.key);
+      setCurrent(matchedItem);
     } else {
       // 如果没有匹配的路由，设置为默认值
-      setCurrent('zoneManagement');
+      setCurrent(defaultCurrent);
     }
 
   }, [location.pathname])
@@ -177,7 +183,7 @@ const PageLayout: React.FC = () => {
               defaultOpenKeys={['userManagement']}
               mode="inline"
               items={items}
-              selectedKeys={[current]}
+              selectedKeys={[current.key]}
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px' }}>
@@ -199,7 +205,7 @@ const PageLayout: React.FC = () => {
         <Main>
           <Breadcrumb style={{ marginBottom: '13px' }}>
             <Breadcrumb.Item>首页</Breadcrumb.Item>
-            <Breadcrumb.Item>{items.find(item => item.key === current)?.label}</Breadcrumb.Item>
+            <Breadcrumb.Item>{current.label}</Breadcrumb.Item>
           </Breadcrumb>
           <Content>
             <Outlet />
