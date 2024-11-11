@@ -211,7 +211,6 @@ const PageLayout: React.FC = () => {
             <Outlet />
           </Content>
         </Main>
-
       </LayoutContent>
     </Layout>
   );
