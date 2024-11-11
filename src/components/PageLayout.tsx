@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
   AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Menu, } from 'antd';
+import { Breadcrumb, Button, Menu, Popconfirm, Tooltip, } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
 
@@ -19,30 +15,67 @@ const Layout = styled.div`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-
 `
 
 const Sider = styled.div`
   overflow: auto;
   height: 100vh;
-  width: 300px;
+  width: 250px;
+  padding-top: 10px;
+  background-color: #fff;
   position: sticky;
   top: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #99999961;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease; /* 添加过渡效果 */
 `;
 
 const PortraitImg = styled.img`
   border-radius: 50%;
 `
 
-const Content = styled.div`
+const Main = styled.div`
   flex: 1;
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  margin: 10px 18px;
 `
 
-const items: any[] = [
+const Content = styled.div`
+  flex: 1;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`
+
+const LayoutContent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background-color: #f5f5f5;
+`
+const Title = styled.div`
+  font-size: 18px;
+  font-weight: 600;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+interface MenuItem {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  children?: MenuItem[];
+}
+
+const items: MenuItem[] = [
   {
     key: 'zoneManagement',
     label: '赛区管理',
@@ -88,6 +121,7 @@ const PageLayout: React.FC = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState('examRoomManagement');
   const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false); // 新增状态
 
   useEffect(() => {
     // 获取一级路由
@@ -123,27 +157,56 @@ const PageLayout: React.FC = () => {
   const onClick: MenuProps['onClick'] = (e) => {
     navigate(e.key)
   };
-
+  const toggleSider = () => {
+    setCollapsed(!collapsed);
+  };
 
   return (
     <Layout>
-      <Sider>
-        <Menu
-          onClick={onClick}
-          style={{ width: 300 }}
-          defaultSelectedKeys={['examRoomManagement']}
-          defaultOpenKeys={['userManagement']}
-          mode="inline"
-          items={items}
-          selectedKeys={[current]}
-        />
-        <div>
-          <PortraitImg src="" />
-        </div>
-      </Sider>
-      <Content>
-        <Outlet />
-      </Content>
+      <LayoutContent >
+        <Sider style={{ width: collapsed ? '70px' : '250px' }}> {/* 根据状态调整宽度 */}
+          <div>
+            <Title>
+              {!collapsed && <span>CESO管理系统</span>}
+              <Button onClick={toggleSider} style={{ marginLeft: 'auto' }} icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />} />
+            </Title>
+            <Menu
+              onClick={onClick}
+              style={{ width: '100%', visibility: collapsed ? 'hidden' : 'visible' }}
+              defaultSelectedKeys={['examRoomManagement']}
+              defaultOpenKeys={['userManagement']}
+              mode="inline"
+              items={items}
+              selectedKeys={[current]}
+            />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px' }}>
+            {!collapsed &&
+              <PortraitImg style={{ width: 30, height: 30, borderRadius: '50%' }} src="/src/assets/images/defaultProtrait.jpg" />}
+            <Popconfirm
+              title="确认退出登录？"
+              onConfirm={() => {
+                localStorage.removeItem('token');
+                navigate('/login');
+              }}
+              okText="确认"
+              cancelText="取消"
+            >
+              <LogoutOutlined style={{ fontSize: 20, cursor: 'pointer' }} />
+            </Popconfirm>
+          </div>
+        </Sider>
+        <Main>
+          <Breadcrumb style={{ marginBottom: '13px' }}>
+            <Breadcrumb.Item>首页</Breadcrumb.Item>
+            <Breadcrumb.Item>{items.find(item => item.key === current)?.label}</Breadcrumb.Item>
+          </Breadcrumb>
+          <Content>
+            <Outlet />
+          </Content>
+        </Main>
+
+      </LayoutContent>
     </Layout>
   );
 };
