@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
+import { login } from '../api/api';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -29,10 +30,15 @@ const Title = styled.div`
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const onFinish = (values: any) => {
+  const onFinish = (values: API.LoginParams) => {
     // 这里添加登录逻辑
-    localStorage.setItem('token', '123456');
-    navigate('/');
+    // navigate('/');
+    login(values).then((res) => {
+      if (res.code === 200) {
+        localStorage.setItem('token', res.data.token);
+        navigate('/');
+      }
+    });
   };
 
   return (

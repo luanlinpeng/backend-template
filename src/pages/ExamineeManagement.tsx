@@ -88,6 +88,7 @@ const ExamineeManagement = () => {
         <Form
           name="addZone"
           onFinish={onFinish}
+          layout="inline"
           style={{ display: 'flex', flexDirection: 'row', gap: 20, justifyContent: 'flex-start' }}
         >
           <Form.Item

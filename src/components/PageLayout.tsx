@@ -9,6 +9,7 @@ import type { MenuProps } from 'antd';
 import { Breadcrumb, Button, Menu, Popconfirm, Tooltip, } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
+import { logout } from '../api/api';
 
 
 const Layout = styled.div`
@@ -192,8 +193,11 @@ const PageLayout: React.FC = () => {
             <Popconfirm
               title="确认退出登录？"
               onConfirm={() => {
-                localStorage.removeItem('token');
-                navigate('/login');
+                logout().then((res) => {
+                  if (res.code === 200) {
+                    navigate('/login');
+                  }
+                });
               }}
               okText="确认"
               cancelText="取消"

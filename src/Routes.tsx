@@ -13,6 +13,7 @@ import SetUp from './pages/SetUp';
 import ZoneManagement from './pages/ZoneManagement';
 import TeacherRegisterDetail from './pages/TeacherRegisterDetail';
 import AddExam from './pages/AddExam';
+import EditExam from './pages/EditExam';
 
 export const Routes: RouteObject[] = [
   {
@@ -74,5 +75,9 @@ export const Routes: RouteObject[] = [
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/editExam',
+    element: <EditExam />
   }
 ];
